@@ -28,7 +28,7 @@ const DashboardForm = () => {
         </div>
         <Form.Control asChild>
           <input
-            className="h-9 w-full rounded px-2.5 text-base leading-none"
+            className="h-9 w-full px-2.5 bg-accent rounded text-base leading-none"
             required
             onChange={e => setText(e.target.value)}
           />
