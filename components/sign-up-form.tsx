@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,10 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useUserStore } from "@/lib/hooks/useUserStore";
 
 export function SignUpForm({
   className,
@@ -27,7 +26,6 @@ export function SignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const {setUserEmail} = useUserStore()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +48,6 @@ export function SignUpForm({
         },
       });
       if (error) throw error;
-      setUserEmail(email)
       router.push("/auth/sign-up-success");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
