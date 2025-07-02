@@ -27,19 +27,19 @@ export default function Layout({
   }, [])
 
   return (
-    <main>
+    <>
       <header className="relative w-full flex justify-between border-b border-b-foreground/10 h-16">
-        <div className="h-full px-2 flex items-center">
+        <div className="px-2 flex items-center">
           <Link href={"/"}><i className="font-semibold">LOGO</i></Link>
         </div>
-        <div className="flex items-center p-3 px-5 text-sm">
+        <div className="flex items-center text-sm">
           {pathname == '/dashboard' ?
             <span>Dashboard / <Link href='/dashboard/notes'><Button>Notes</Button></Link></span>
           :
             <span><Link href='/dashboard'><Button>Dashboard</Button></Link> / Notes</span>
           }
         </div>
-        <div className="h-full px-2 flex items-center gap-2">
+        <div className="px-2 flex items-center gap-2">
           <ThemeSwitcher />
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -58,6 +58,6 @@ export default function Layout({
         </div>
       </header>
       {children}
-    </main>
+    </>
   );
 }

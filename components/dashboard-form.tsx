@@ -18,7 +18,7 @@ const DashboardForm = () => {
   }
 
   return (
-    <Form.Root onSubmit={handleSubmit} className="max-w-xl grid gap-5">
+    <Form.Root onSubmit={handleSubmit} className="w-full grid gap-5">
       <Form.Field className="grid" name="text">
         <div className="flex items-baseline justify-between">
           <Form.Label>Todo text</Form.Label>
