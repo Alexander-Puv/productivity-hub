@@ -1,7 +1,6 @@
+import DashboardPage from "@/components/dashboard-page";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import DashboardForm from "../../components/dashboard-form";
-import Todo from "@/components/ui/todo";
 
 export default async function Page() {
   const supabase = await createClient()
@@ -14,11 +13,7 @@ export default async function Page() {
   
   return (
     <main className="flex justify-center">
-      <section className="w-full max-w-xl m-8 flex flex-col items-center gap-3">
-        <DashboardForm />
-        <div className="mb-2" />
-        {todos?.map(todo => !todo.done && <Todo {...todo} key={todo.id} />)}
-      </section>
+      <DashboardPage todos={todos} />
     </main>
   )
 }

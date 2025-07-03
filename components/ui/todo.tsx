@@ -8,14 +8,14 @@ import * as Slider from "@radix-ui/react-slider"
 import { Check } from "lucide-react"
 import { useEffect, useState } from "react"
 
-const Todo = ({id, text, created_at, done}: ITodo) => {
+const Todo = ({id, text, created_at, done, autoHide = false}: ITodo & { autoHide?: boolean }) => {
   const [isDone, setIsDone] = useState(done)
   const [value, setValue] = useState([0])
   const [visible, setVisible] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
-    if (!isDone) {
+    if (!autoHide || !isDone) {
       setValue([0])
       return
     }
@@ -34,7 +34,7 @@ const Todo = ({id, text, created_at, done}: ITodo) => {
     }, 100)
 
     return () => clearInterval(interval)
-  }, [isDone])
+  }, [isDone, autoHide])
 
   const toggleDone = async () => {
     const { error } = await supabase
@@ -68,7 +68,7 @@ const Todo = ({id, text, created_at, done}: ITodo) => {
         </div>
       </div>
       <span className="self-end p-1 text-xs font-light">
-        {!isDone
+        {!isDone || !autoHide
           ? `${formatDate(created_at)} ${formatTime(created_at)}`
           : <Slider.Root
             value={value}
