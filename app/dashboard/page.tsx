@@ -17,7 +17,7 @@ export default async function Page() {
       <section className="w-full max-w-xl m-8 flex flex-col items-center gap-3">
         <DashboardForm />
         <div className="mb-2" />
-        {todos?.map(todo => <Todo {...todo} key={todo.id} />)}
+        {todos?.map(todo => !todo.done && <Todo {...todo} key={todo.id} />)}
       </section>
     </main>
   )
