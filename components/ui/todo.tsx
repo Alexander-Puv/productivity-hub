@@ -8,7 +8,10 @@ import * as Slider from "@radix-ui/react-slider"
 import { Check } from "lucide-react"
 import { useEffect, useState } from "react"
 
-const Todo = ({id, text, created_at, done, autoHide = false}: ITodo & { autoHide?: boolean }) => {
+const Todo = (
+  {id, text, created_at, done, setTodos, autoHide = false}:
+  ITodo & { autoHide?: boolean } & { setTodos: React.Dispatch<React.SetStateAction<ITodo[] | null>> }
+) => {
   const [isDone, setIsDone] = useState(done)
   const [value, setValue] = useState([0])
   const [visible, setVisible] = useState(true)
@@ -17,6 +20,7 @@ const Todo = ({id, text, created_at, done, autoHide = false}: ITodo & { autoHide
   useEffect(() => {
     if (!autoHide || !isDone) {
       setValue([0])
+      setTodos(todos => todos?.map(todo => {return {...todo, done: todo.id == id ? isDone : todo.done}}) ?? todos)
       return
     }
 
@@ -30,6 +34,7 @@ const Todo = ({id, text, created_at, done, autoHide = false}: ITodo & { autoHide
       if (progress >= 100) {
         clearInterval(interval)
         setVisible(false)
+        setTodos(todos => todos?.map(todo => {return {...todo, done: todo.id == id ? isDone : todo.done}}) ?? todos)
       }
     }, 100)
 

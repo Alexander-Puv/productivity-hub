@@ -14,6 +14,8 @@ const DashboardForm = () => {
 
     if (res.error) {
       console.error(res.error)
+    } else {
+      setText('')
     }
   }
 
@@ -30,6 +32,7 @@ const DashboardForm = () => {
           <input
             className="h-9 w-full px-2.5 bg-accent rounded text-base leading-none"
             required
+            value={text}
             onChange={e => setText(e.target.value)}
           />
         </Form.Control>
