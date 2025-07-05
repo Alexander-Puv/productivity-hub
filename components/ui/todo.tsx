@@ -14,7 +14,6 @@ const Todo = (
 ) => {
   const [isDone, setIsDone] = useState(done)
   const [value, setValue] = useState([0])
-  const [visible, setVisible] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
@@ -33,7 +32,6 @@ const Todo = (
       setValue([progress])
       if (progress >= 100) {
         clearInterval(interval)
-        setVisible(false)
         setTodos(todos => todos?.map(todo => {return {...todo, done: todo.id == id ? isDone : todo.done}}) ?? todos)
       }
     }, 100)
@@ -54,7 +52,7 @@ const Todo = (
     }
   }
 
-  return !visible ? null : (
+  return (
     <div className="w-full flex flex-col border-2 rounded-sm">
       <div className="flex">
         <div className="w-full flex-grow flex flex-col">
