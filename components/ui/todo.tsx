@@ -3,10 +3,11 @@
 import { createClient } from "@/lib/supabase/client"
 import { formatDate, formatTime } from "@/lib/utils"
 import { Separator } from "@radix-ui/react-dropdown-menu"
-import { Toggle } from "@radix-ui/react-toggle"
 import * as Slider from "@radix-ui/react-slider"
-import { Check } from "lucide-react"
+import { Toggle } from "@radix-ui/react-toggle"
+import { Check, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Button } from "./button"
 
 const Todo = (
   {id, text, created_at, done, setTodos, autoHide = false}:
@@ -14,6 +15,7 @@ const Todo = (
 ) => {
   const [isDone, setIsDone] = useState(done)
   const [value, setValue] = useState([0])
+  const [showTrash, setShowTrash] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -52,9 +54,23 @@ const Todo = (
     }
   }
 
+  const deleteTodo = async () => {
+    const {error} = await supabase
+      .from('todos')
+      .delete()
+      .eq('id', id)
+
+    if (!error) setTodos(todos => todos?.filter(todo => todo.id !== id) ?? null)
+    else console.error('Failed to delete todo:', error.message)
+  }
+
   return (
-    <div className="w-full flex flex-col border-2 rounded-sm">
-      <div className="flex">
+    <div
+      className="relative w-full flex flex-col border-2 rounded-sm"
+      onMouseEnter={() => setShowTrash(true)}
+      onMouseLeave={() => setShowTrash(false)}
+    >
+      <div className="relative z-10 flex">
         <div className="w-full flex-grow flex flex-col">
           <p className="my-1 mx-2">{text}</p>
           <Separator className="mx-1 h-px bg-border" />
@@ -70,7 +86,7 @@ const Todo = (
           <Separator className="mx-1 h-px bg-border" />
         </div>
       </div>
-      <span className="self-end p-1 text-xs font-light">
+      <span className="relative z-10 self-end p-1 text-xs font-light">
         {!isDone || !autoHide
           ? `${formatDate(created_at)} ${formatTime(created_at)}`
           : <Slider.Root
@@ -85,6 +101,11 @@ const Todo = (
             </Slider.Track>
           </Slider.Root>
         }
+      </span>
+      <span className={`absolute right-0 h-full p-2 transition duration-300 ${!showTrash ? 'opacity-0 translate-x-0' : 'translate-x-full'}`}>
+        <Button className="h-full ml-2 p-3" onClick={deleteTodo}>
+          <Trash2 height='100%' width='100%' />
+        </Button>
       </span>
     </div>
   )

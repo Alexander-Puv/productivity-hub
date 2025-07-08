@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DashboardForm from './dashboard-form'
 import Todo from './ui/todo'
 import { Button } from './ui/button'
@@ -8,6 +8,10 @@ import { Button } from './ui/button'
 const DashboardPage = ({recievedTodos}: {recievedTodos: ITodo[] | null}) => {
   const [isFinishedPage, setIsFinishedPage] = useState(false)
   const [todos, setTodos] = useState(recievedTodos)
+  
+  useEffect(() => {
+    setTodos(recievedTodos)
+  }, [recievedTodos])
 
   return (
     <section className="w-full max-w-xl m-8 flex flex-col">
