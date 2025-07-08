@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { addTodo } from "@/lib/actions/addTodo";
 import * as Form from "@radix-ui/react-form";
 import { useState } from "react";
+import Loader from "./ui/loader";
 
 const DashboardForm = () => {
   const [text, setText] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setIsLoading(true)
     const res = await addTodo(text)
 
     if (res.error) {
@@ -17,6 +20,7 @@ const DashboardForm = () => {
     } else {
       setText('')
     }
+    setIsLoading(false)
   }
 
   return (
@@ -38,7 +42,12 @@ const DashboardForm = () => {
         </Form.Control>
       </Form.Field>
       <Form.Submit asChild>
-        <Button className="ml-auto">Add todo</Button>
+        <Button className="ml-auto">
+          {isLoading
+            ? <Loader />
+            : 'Add todo'
+          }
+        </Button>
       </Form.Submit>
     </Form.Root>
   )
