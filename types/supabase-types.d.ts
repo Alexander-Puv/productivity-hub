@@ -13,4 +13,12 @@ interface INotes {
   user_id: string
   title: string
   content: string
+  folder_id: string
+}
+
+interface IFolders {
+  id: string
+  created_at: string
+  user_id: string
+  title: string
 }
