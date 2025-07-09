@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
-import { addTodo } from "@/lib/actions/addTodo";
+import { addRecord } from "@/lib/actions/add-record";
 import * as Form from "@radix-ui/react-form";
 import { useState } from "react";
 import Loader from "./ui/loader";
@@ -13,7 +13,7 @@ const DashboardForm = () => {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
-    const res = await addTodo(text)
+    const res = await addRecord({tableName: 'todos', values: {text, done: false}})
 
     if (res.error) {
       console.error(res.error)
