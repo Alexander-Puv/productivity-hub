@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client"
 import { formatDate, formatTime } from "@/lib/utils"
 import { Separator } from "@radix-ui/react-dropdown-menu"
-import * as Slider from "@radix-ui/react-slider"
+import * as Progress from "@radix-ui/react-progress"
 import { Toggle } from "@radix-ui/react-toggle"
 import { Check, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -14,24 +14,24 @@ const Todo = (
   ITodo & { autoHide?: boolean } & { setTodos: React.Dispatch<React.SetStateAction<ITodo[] | null>> }
 ) => {
   const [isDone, setIsDone] = useState(done)
-  const [value, setValue] = useState([0])
+  const [value, setValue] = useState(0)
   const [showTrash, setShowTrash] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
     if (!autoHide || !isDone) {
-      setValue([0])
+      setValue(0)
       setTodos(todos => todos?.map(todo => {return {...todo, done: todo.id == id ? isDone : todo.done}}) ?? todos)
       return
     }
 
-    setValue([0])
+    setValue(0)
     const start = Date.now()
 
     const interval = setInterval(() => {
       const elapsed = (Date.now() - start) / 1000
       const progress = Math.min((elapsed / 5) * 100, 100)
-      setValue([progress])
+      setValue(progress)
       if (progress >= 100) {
         clearInterval(interval)
         setTodos(todos => todos?.map(todo => {return {...todo, done: todo.id == id ? isDone : todo.done}}) ?? todos)
@@ -89,17 +89,16 @@ const Todo = (
       <span className="relative z-10 self-end p-1 text-xs font-light">
         {!isDone || !autoHide
           ? `${formatDate(created_at)} ${formatTime(created_at)}`
-          : <Slider.Root
+          : <Progress.Root
+            className="relative h-3 w-8 my-0.5 overflow-hidden rounded-full bg-accent"
+            style={{transform: "translateZ(0)"}}
             value={value}
-            max={100}
-            step={1}
-            disabled
-            className="relative h-3 w-8 my-0.5 flex items-center select-none touch-none"
           >
-            <Slider.Track className="relative grow rounded-full h-full bg-accent">
-              <Slider.Range className="absolute rounded-full h-full bg-primary" />
-            </Slider.Track>
-          </Slider.Root>
+            <Progress.Indicator 
+              className="bg-primary transition-transform duration-200 ease-in-out"
+              style={{ transform: `translateX(-${100 - value}%)` }}
+            />
+          </Progress.Root>
         }
       </span>
       <span className={`absolute right-0 h-full p-2 transition duration-300 ${!showTrash ? 'opacity-0 translate-x-0' : 'translate-x-full'}`}>
