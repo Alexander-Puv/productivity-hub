@@ -27,15 +27,15 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
   }
 
   return (
-    <nav className="flex pt-2 px-1 border-b">
+    <nav className="max-w-full flex pt-2 px-1 border-b overflow-x-auto">
       {folders?.map(folder => 
         <Button
-          className={`${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'}`}
+          className={`${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'} max-w-40`}
           variant={chosenFolderID === folder.id ? 'default' : 'ghost'}
           onClick={() => setChosenFolderID(folder.id)}
           key={folder.id}
         >
-          <p>{folder.title}</p>
+          <p className='truncate'>{folder.title}</p>
         </Button>
       )}
       {newFolder &&
