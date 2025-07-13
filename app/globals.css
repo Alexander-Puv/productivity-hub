@@ -58,6 +58,25 @@
   }
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  transition: all 0.3s ease;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+}
+:hover::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--accent));
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -66,3 +85,4 @@
     @apply bg-background text-foreground;
   }
 }
+
