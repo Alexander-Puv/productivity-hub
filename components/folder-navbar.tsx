@@ -1,20 +1,16 @@
 'use client'
 
 import { addRecord } from '@/lib/actions/add-record'
-import { Plus } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { Button } from './ui/button'
 import { useFolderStore } from '@/lib/hooks/use-folder-store'
+import { FocusEvent, useRef, useState } from 'react'
+import { Button } from './ui/button'
+import NewButton from './ui/new-button'
 
 const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const {chosenFolderID, setChosenFolderID} = useFolderStore()
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const handleClick = () => {
-    inputRef.current?.focus()
-  }
+  const wrapperRef = useRef<HTMLButtonElement>(null)
 
   const handleNewFolder = async () => {
     const {error} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
@@ -24,6 +20,12 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
     } else {
       setNewFolder(false)
       setInputValue('')
+    }
+  }
+  const handleBlur = (e: FocusEvent) => {
+    const nextFocus = e.relatedTarget as HTMLElement | null
+    if (!wrapperRef.current?.contains(nextFocus)) {
+      handleNewFolder()
     }
   }
   
@@ -40,20 +42,16 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
         </Button>
       )}
       {newFolder &&
-        <Button className="px-2 rounded-b-none" variant='default' onClick={handleClick}>
+        <Button className="px-2 rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
           <input
             className='px-px bg-transparent outline-border'
-            ref={inputRef}
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleNewFolder()}
-            onBlur={handleNewFolder}
           />
         </Button>
       }
-      <button className="self-center m-1 p-1.5 bg-border rounded-full" onClick={() => setNewFolder(true)}>
-        <Plus width={16} height={16} />
-      </button>
+      <NewButton onClick={() => setNewFolder(true)} />
     </nav>
   )
 }
