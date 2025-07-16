@@ -4,11 +4,12 @@ import { addRecord } from '@/lib/actions/add-record'
 import { Plus } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { useFolderStore } from '@/lib/hooks/use-folder-store'
 
 const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
-  const [chosenFolderID, setChosenFolderID] = useState('')
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const {chosenFolderID, setChosenFolderID} = useFolderStore()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleClick = () => {
