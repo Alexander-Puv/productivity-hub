@@ -25,7 +25,7 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
       setInputValue('')
     }
   }
-
+  
   return (
     <nav className="max-w-full flex pt-2 px-1 border-b overflow-x-auto">
       {folders?.map(folder => 
@@ -35,7 +35,7 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
           onClick={() => setChosenFolderID(folder.id)}
           key={folder.id}
         >
-          <p className='truncate'>{folder.title}</p>
+          <p className='truncate'>{folder.title ? folder.title : 'No title'}</p>
         </Button>
       )}
       {newFolder &&

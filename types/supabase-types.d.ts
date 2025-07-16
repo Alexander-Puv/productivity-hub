@@ -20,5 +20,5 @@ interface IFolders {
   id: string
   created_at: string
   user_id: string
-  title: string
+  title: string | null
 }
