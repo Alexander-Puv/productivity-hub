@@ -3,13 +3,24 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '../supabase/server'
 
-interface addRecordProps {
-  tableName: string
-  values: object
-  revalidate?: string
-}
+type AddRecordProps =
+  | {
+      tableName: 'folders'
+      values: { title: string }
+      revalidate?: string
+    }
+  | {
+      tableName: 'notes'
+      values: { folder_id: string; title?: string; content?: string }
+      revalidate?: string
+    }
+  | {
+      tableName: 'todos'
+      values: { text: string; done: boolean }
+      revalidate?: string
+    }
 
-export async function addRecord({tableName, values, revalidate = '/dashboard'}: addRecordProps) {
+export async function addRecord({tableName, values, revalidate = '/dashboard'}: AddRecordProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
