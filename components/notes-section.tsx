@@ -25,14 +25,16 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
     setNewNote(false)
     setIsLoading(true)
 
-    const { error } = await addRecord({
+    const { data, error } = await addRecord({
       tableName: 'notes',
       values: { folder_id: chosenFolderID, title: noteTitle },
       revalidate: '/dashboard/notes'
     })
 
     if (error) console.error(error)
-    else setIsLoading(false)
+    else setChosenNoteID((data as INotes).id)
+
+    setIsLoading(false)
   }
 
   return (!chosenFolderID ? null :

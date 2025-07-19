@@ -23,11 +23,14 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
     setInputValue('')
     setIsLoading(true)
 
-    const {error} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
+    const {data, error} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
 
     if (error) console.error(error)
-    else setIsLoading(false)
+    else setChosenFolderID((data as IFolders).id)
+
+    setIsLoading(false)
   }
+
   const handleBlur = (e: FocusEvent) => {
     const nextFocus = e.relatedTarget as HTMLElement | null
     if (!wrapperRef.current?.contains(nextFocus)) {

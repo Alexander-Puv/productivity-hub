@@ -28,15 +28,15 @@ export async function addRecord({tableName, values, revalidate = '/dashboard'}: 
     return { error: 'Not authenticated' }
   }
 
-  const { error } = await supabase.from(tableName).insert({
+  const { data, error } = await supabase.from(tableName).insert({
     user_id: user.id,
     ...values
-  })
+  }).select().single()
 
   if (error) {
     return { error: error.message }
   }
 
   revalidatePath(revalidate)
-  return { success: true }
+  return { data }
 }
