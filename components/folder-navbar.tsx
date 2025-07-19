@@ -2,17 +2,21 @@
 
 import { addRecord } from '@/lib/actions/add-record'
 import { useFolderStore } from '@/lib/hooks/use-folder-store'
-import { FocusEvent, useRef, useState } from 'react'
+import { FocusEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import NewButton from './ui/new-button'
 import Loader from './ui/loader'
 
-const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
+const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null, lastViewedFolderID: string | null}) => {
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const {chosenFolderID, setChosenFolderID} = useFolderStore()
   const [isLoading, setIsLoading] = useState(false)
   const wrapperRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    lastViewedFolderID && setChosenFolderID(lastViewedFolderID)
+  }, [])
 
   const handleNewFolder = async () => {
     setNewFolder(false)

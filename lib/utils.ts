@@ -19,3 +19,11 @@ export const formatTime = (recivedDate: number | string | Date) => {
   const date = new Date(recivedDate)
   return `${date.getHours()}:${date.getMinutes()}`
 }
+
+export const lastViewedNote = (notes: INotes[] | null) => {
+  return notes && notes.length
+    ? notes
+      .filter(note => note.last_viewed)
+      .sort((a, b) => new Date(b.last_viewed!).getTime() - new Date(a.last_viewed!).getTime())[0]
+    : null
+}

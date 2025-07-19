@@ -6,11 +6,12 @@ import { useEffect, useState } from 'react'
 import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
 import Loader from './ui/loader'
+import { lastViewedNote } from '@/lib/utils'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
-  const [chosenNoteID, setChosenNoteID] = useState('')
   const { chosenFolderID } = useFolderStore()
   const [chosenNotes, setChosenNotes] = useState<INotes[] | null>(null)
+  const [chosenNoteID, setChosenNoteID] = useState(lastViewedNote(notes)?.id || '')
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)

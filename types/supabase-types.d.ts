@@ -14,6 +14,7 @@ interface INotes {
   title: string
   content: string
   folder_id: string
+  last_viewed: string
 }
 
 interface IFolders {
