@@ -5,22 +5,24 @@ import { useFolderStore } from '@/lib/hooks/use-folder-store'
 import { FocusEvent, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import NewButton from './ui/new-button'
+import Loader from './ui/loader'
 
 const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const {chosenFolderID, setChosenFolderID} = useFolderStore()
+  const [isLoading, setIsLoading] = useState(false)
   const wrapperRef = useRef<HTMLButtonElement>(null)
 
   const handleNewFolder = async () => {
+    setNewFolder(false)
+    setInputValue('')
+    setIsLoading(true)
+
     const {error} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
 
-    if (error) {
-      console.error(error)
-    } else {
-      setNewFolder(false)
-      setInputValue('')
-    }
+    if (error) console.error(error)
+    else setIsLoading(false)
   }
   const handleBlur = (e: FocusEvent) => {
     const nextFocus = e.relatedTarget as HTMLElement | null
@@ -44,6 +46,7 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
       {newFolder &&
         <Button className="px-2 rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
           <input
+            autoFocus
             className='px-px bg-transparent outline-border'
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
@@ -51,6 +54,7 @@ const FolderNavbar = ({folders}: {folders: IFolders[] | null}) => {
           />
         </Button>
       }
+      {isLoading && <Loader className='mx-2 my-1 border-primary border-b-transparent' />}
       <NewButton onClick={() => setNewFolder(true)} />
     </nav>
   )

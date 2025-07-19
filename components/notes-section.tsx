@@ -5,6 +5,7 @@ import { useFolderStore } from '@/lib/hooks/use-folder-store'
 import { useEffect, useState } from 'react'
 import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
+import Loader from './ui/loader'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const [chosenNoteID, setChosenNoteID] = useState('')
@@ -12,6 +13,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const [chosenNotes, setChosenNotes] = useState<INotes[] | null>(null)
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setChosenNotes(notes?.filter(note => note.folder_id == chosenFolderID) ?? null)
@@ -20,6 +22,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const handleNewNote = async () => {
     setNoteTitle('')
     setNewNote(false)
+    setIsLoading(true)
 
     const { error } = await addRecord({
       tableName: 'notes',
@@ -28,6 +31,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
     })
 
     if (error) console.error(error)
+    else setIsLoading(false)
   }
 
   return (!chosenFolderID ? null :
@@ -63,6 +67,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
               onBlur={handleNewNote}
             />
           )}
+          {isLoading && <Loader className='mx-2 my-1 border-primary border-b-transparent' />}
         </nav>
       </div>
       
