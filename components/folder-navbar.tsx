@@ -6,13 +6,17 @@ import { FocusEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import NewButton from './ui/new-button'
 import Loader from './ui/loader'
+import { createClient } from '@/lib/supabase/client'
+import Folder from './ui/folder'
 
 const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null, lastViewedFolderID: string | null}) => {
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const {chosenFolderID, setChosenFolderID} = useFolderStore()
   const [isLoading, setIsLoading] = useState(false)
+  const [editingFolderID, setEditingFolderID] = useState<string | null>(null)
   const wrapperRef = useRef<HTMLButtonElement>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     lastViewedFolderID && setChosenFolderID(lastViewedFolderID)
@@ -40,18 +44,9 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
   
   return (
     <nav className="max-w-full flex pt-2 px-1 border-b overflow-x-auto">
-      {folders?.map(folder => 
-        <Button
-          className={`${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'} max-w-40`}
-          variant={chosenFolderID === folder.id ? 'default' : 'ghost'}
-          onClick={() => setChosenFolderID(folder.id)}
-          key={folder.id}
-        >
-          <p className='truncate'>{folder.title ? folder.title : 'No title'}</p>
-        </Button>
-      )}
+      {folders?.map(folder => <Folder folder={folder} key={folder.id} />)}
       {newFolder &&
-        <Button className="px-2 rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
+        <Button className="rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
           <input
             autoFocus
             className='px-px bg-transparent outline-border'
