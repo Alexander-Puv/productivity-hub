@@ -52,7 +52,9 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
             <p>New page</p>
           </div>
           {chosenNotes && chosenNotes.length !== 0
-            ? chosenNotes.map(note => <NavbarNote
+            ? chosenNotes
+              .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+              .map(note => <NavbarNote
               note={note}
               isChosen={chosenNoteID === note.id}
               onClick={setChosenNoteID}
@@ -73,7 +75,6 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
           {isLoading && <Loader className='mx-2 my-1 border-primary border-b-transparent' />}
         </nav>
       </div>
-      
     </section>
   )
 }

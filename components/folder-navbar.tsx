@@ -44,7 +44,10 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
   
   return (
     <nav className="max-w-full flex pt-2 px-1 border-b overflow-x-auto">
-      {folders?.map(folder => <Folder folder={folder} key={folder.id} />)}
+      {folders
+        ?.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        .map(folder => <Folder folder={folder} key={folder.id} />)
+      }
       {newFolder &&
         <Button className="rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
           <input
