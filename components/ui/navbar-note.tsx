@@ -1,6 +1,8 @@
 'use client'
 
 import { createClient } from "@/lib/supabase/client"
+import { Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 interface NavbarNoteProps {
@@ -16,6 +18,7 @@ interface NavbarNoteProps {
 const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputValue, onBlur }: NavbarNoteProps) => {
   const [noteTitle, setNoteTitle] = useState(note?.title || '')
   const [isEditingNow, setIsEditingNow] = useState(isEditing || false)
+  const router = useRouter()
   const supabase = createClient()
 
   const changeTitle = async () => {
@@ -30,7 +33,7 @@ const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputVa
     else setIsEditingNow(false)
   }
 
-  if (isEditingNow) {
+  if (isEditingNow || !note) {
     return (
       <div className='bg-primary text-primary-foreground'>
         <input
@@ -45,10 +48,9 @@ const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputVa
     )
   }
 
-  const chooseFolder = async () => {
-    if (!note) return
+  const chooseNote = async () => {
     onClick && onClick(note.id)
-    
+
     const { error } = await supabase
       .from('notes')
       .update({ last_viewed: new Date().toISOString() })
@@ -57,12 +59,28 @@ const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputVa
     if (error) console.error('Failed to update note:', error.message)
   }
 
+  const deleteNote = async () => {
+    const { error } = await supabase
+      .from('notes')
+      .delete()
+      .eq('id', note.id)
+
+    if (error) console.error('Failed to delete note:', error.message)
+    else router.refresh()
+  }
+
   return <div
-    className={`cursor-pointer transition-all hover:bg-accent ${isChosen && 'bg-accent'}`}
-    onClick={chooseFolder}
+    className={`group px-2 py-1 flex cursor-pointer transition-all hover:bg-accent ${isChosen && 'bg-accent'}`}
+    onClick={chooseNote}
     onDoubleClick={() => setIsEditingNow(true)}
   >
-    <p className="px-2 py-1 truncate">{noteTitle || note?.content || 'Empty note'}</p>
+    <p className="grow truncate">{noteTitle || note?.content || 'Empty note'}</p>
+    <span
+      className={`hidden group-hover:block ${isChosen && '!block'}`}
+      onClick={e => {e.stopPropagation(); deleteNote()}}
+    >
+      <Trash2 />
+    </span>
   </div>
 }
 
