@@ -3,15 +3,20 @@
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "./button"
 import Loader from "./loader"
-import { FocusEvent, useRef, useState } from "react"
+import { Dispatch, FocusEvent, SetStateAction, useRef, useState } from "react"
 import { useFolderStore } from "@/lib/hooks/use-folder-store"
+import { Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-const Folder = ({ folder }: { folder: IFolders }) => {
+const Folder = ({ folder, setFilteredFolders }:
+  { folder: IFolders, setFilteredFolders: Dispatch<SetStateAction<IFolders[] | null>> }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [inputValue, setInputValue] = useState(folder.title || '')
   const [isLoading, setIsLoading] = useState(false)
-  const {chosenFolderID, setChosenFolderID} = useFolderStore()
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false)
+  const { chosenFolderID, setChosenFolderID } = useFolderStore()
   const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
   const supabase = createClient()
 
   const changeTitle = async () => {
@@ -36,9 +41,26 @@ const Folder = ({ folder }: { folder: IFolders }) => {
     }, 10)
   }
 
+  const deleteFolder = async () => {
+    setIsLoadingDelete(true)
+
+    const { error } = await supabase
+      .from('folders')
+      .delete()
+      .eq('id', folder.id)
+
+    if (error) console.error('Failed to delete folder:', error.message)
+    else {
+      setFilteredFolders && setFilteredFolders(folders => folders?.filter(thisFolder => thisFolder.id !== folder.id) ?? null)
+      router.refresh()
+    }
+
+    setIsLoadingDelete(false)
+  }
+
   return (
     <Button
-      className={`${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'} max-w-[14.5rem]`}
+      className={`group max-w-[14.5rem] ${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'}`}
       variant={chosenFolderID === folder.id ? 'default' : 'ghost'}
       onClick={() => setChosenFolderID(folder.id)}
       onDoubleClick={() => setIsEditing(true)}
@@ -55,7 +77,18 @@ const Folder = ({ folder }: { folder: IFolders }) => {
             onChange={e => setInputValue(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && changeTitle()}
           />
-          : <p className="truncate">{inputValue || 'No title'}</p>
+          : <div className="flex items-center gap-1">
+            <p className="truncate">{inputValue || 'No title'}</p>
+            <span
+              className={`hidden group-hover:flex transition-colors hover:text-destructive ${chosenFolderID === folder.id && '!flex'}`}
+              onClick={e => { e.stopPropagation(); deleteFolder() }}
+            >
+              {isLoadingDelete
+                ? <Loader color="white" />
+                : <Trash2 />
+              }
+            </span>
+          </div>
       }
     </Button>
   )

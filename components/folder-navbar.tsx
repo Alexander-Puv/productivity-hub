@@ -4,31 +4,33 @@ import { addRecord } from '@/lib/actions/add-record'
 import { useFolderStore } from '@/lib/hooks/use-folder-store'
 import { FocusEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
-import NewButton from './ui/new-button'
-import Loader from './ui/loader'
-import { createClient } from '@/lib/supabase/client'
 import Folder from './ui/folder'
+import Loader from './ui/loader'
+import NewButton from './ui/new-button'
 
-const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null, lastViewedFolderID: string | null}) => {
+const FolderNavbar = ({ folders, lastViewedFolderID }: { folders: IFolders[] | null, lastViewedFolderID: string | null }) => {
   const [newFolder, setNewFolder] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const {chosenFolderID, setChosenFolderID} = useFolderStore()
   const [isLoading, setIsLoading] = useState(false)
-  const [editingFolderID, setEditingFolderID] = useState<string | null>(null)
+  const [filteredFolders, setFilteredFolders] = useState(folders)
+  const { setChosenFolderID } = useFolderStore()
   const wrapperRef = useRef<HTMLButtonElement>(null)
-  const supabase = createClient()
 
   useEffect(() => {
     lastViewedFolderID && setChosenFolderID(lastViewedFolderID)
   }, [])
+
+  useEffect(() => {
+    setFilteredFolders(folders)
+  }, [folders])
 
   const handleNewFolder = async () => {
     setNewFolder(false)
     setInputValue('')
     setIsLoading(true)
 
-    const {data, error: folderError} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
-    const {error: noteError} = await addRecord({tableName: 'notes', values: {folder_id: data.id}, revalidate: '/dashboard/notes'})
+    const { data, error: folderError } = await addRecord({ tableName: 'folders', values: { title: inputValue }, revalidate: '/dashboard/notes' })
+    const { error: noteError } = await addRecord({ tableName: 'notes', values: { folder_id: data.id }, revalidate: '/dashboard/notes' })
 
     if (folderError || noteError) console.error(folderError || noteError)
     else setChosenFolderID((data as IFolders).id)
@@ -42,12 +44,12 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
       handleNewFolder()
     }
   }
-  
+
   return (
     <nav className="max-w-full flex pt-2 px-1 border-b overflow-x-auto">
-      {folders
+      {filteredFolders
         ?.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        .map(folder => <Folder folder={folder} key={folder.id} />)
+        .map(folder => <Folder folder={folder} setFilteredFolders={setFilteredFolders} key={folder.id} />)
       }
       {newFolder &&
         <Button className="rounded-b-none" ref={wrapperRef} onBlur={handleBlur}>
@@ -60,7 +62,7 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
           />
         </Button>
       }
-      {isLoading && <Loader className='mx-2 my-1 border-primary border-b-transparent' />}
+      {isLoading && <Loader color='white' className='mx-2 my-1' />}
       <NewButton onClick={() => setNewFolder(true)} />
     </nav>
   )
