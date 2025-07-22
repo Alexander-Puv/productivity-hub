@@ -27,9 +27,10 @@ const FolderNavbar = ({folders, lastViewedFolderID}: {folders: IFolders[] | null
     setInputValue('')
     setIsLoading(true)
 
-    const {data, error} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
+    const {data, error: folderError} = await addRecord({tableName: 'folders', values: {title: inputValue}, revalidate: '/dashboard/notes'})
+    const {error: noteError} = await addRecord({tableName: 'notes', values: {folder_id: data.id}, revalidate: '/dashboard/notes'})
 
-    if (error) console.error(error)
+    if (folderError || noteError) console.error(folderError || noteError)
     else setChosenFolderID((data as IFolders).id)
 
     setIsLoading(false)
