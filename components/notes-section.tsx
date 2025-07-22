@@ -58,6 +58,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
                 note={note}
                 isChosen={chosenNoteID === note.id || chosenNotes.length === 1}
                 onClick={setChosenNoteID}
+                setChosenNotes={setChosenNotes}
                 key={note.id}
               />)
           }
@@ -71,7 +72,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
               onBlur={handleNewNote}
             />
           )}
-          {isLoading && <Loader className='mx-2 my-1 border-primary border-b-transparent' />}
+          {isLoading && <Loader color='white' className='mx-2 my-1' />}
         </nav>
       </div>
     </section>

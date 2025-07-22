@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils"
 
-const Loader = ({className}: {className?: string}) => {
+const Loader = ({color = 'black', className}: {color?: 'white' | 'black', className?: string}) => {
   return (
     <span className={cn(
-      "w-6 h-6 border-2 border-primary-foreground border-b-transparent rounded-full animate-spin",
+      'w-6 h-6 border-2 rounded-full animate-spin',
+      color === 'black' ? 'border-primary-foreground border-b-transparent' : 'border-primary border-b-transparent',
       className
     )} />
   )

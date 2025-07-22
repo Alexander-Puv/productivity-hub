@@ -3,21 +3,24 @@
 import { createClient } from "@/lib/supabase/client"
 import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
+import Loader from "./loader"
 
 interface NavbarNoteProps {
   note: INotes | null
   isChosen: boolean
   onClick?: (noteID: string) => void
+  setChosenNotes?: Dispatch<SetStateAction<INotes[] | null>>
   isEditing?: boolean
   inputValue?: string
   setInputValue?: React.Dispatch<React.SetStateAction<string>>
   onBlur?: () => void
 }
 
-const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputValue, onBlur }: NavbarNoteProps) => {
+const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputValue, setInputValue, onBlur }: NavbarNoteProps) => {
   const [noteTitle, setNoteTitle] = useState(note?.title || '')
   const [isEditingNow, setIsEditingNow] = useState(isEditing || false)
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -60,13 +63,20 @@ const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputVa
   }
 
   const deleteNote = async () => {
+    setIsLoadingDelete(true)
+
     const { error } = await supabase
       .from('notes')
       .delete()
       .eq('id', note.id)
 
     if (error) console.error('Failed to delete note:', error.message)
-    else router.refresh()
+    else {
+      setChosenNotes && setChosenNotes(notes => notes?.filter(thisNote => thisNote.id !== note.id) ?? null)
+      router.refresh()
+    }
+
+    setIsLoadingDelete(false)
   }
 
   return <div
@@ -76,10 +86,13 @@ const NavbarNote = ({ note, isChosen, onClick, isEditing, inputValue, setInputVa
   >
     <p className="grow truncate">{noteTitle || note?.content || 'Empty note'}</p>
     <span
-      className={`hidden group-hover:block ${isChosen && '!block'}`}
+      className={`hidden group-hover:flex ${isChosen && '!flex'}`}
       onClick={e => {e.stopPropagation(); deleteNote()}}
     >
-      <Trash2 />
+      {isLoadingDelete
+        ? <Loader color="white" />
+        : <Trash2 />
+      }
     </span>
   </div>
 }
