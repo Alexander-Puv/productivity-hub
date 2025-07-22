@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Dispatch, SetStateAction, useState } from "react"
 import Loader from "./loader"
+import { chooseNote } from "@/lib/actions/choose-note"
 
 interface NavbarNoteProps {
   note: INotes | null
@@ -51,17 +52,6 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
     )
   }
 
-  const chooseNote = async () => {
-    onClick && onClick(note.id)
-
-    const { error } = await supabase
-      .from('notes')
-      .update({ last_viewed: new Date().toISOString() })
-      .eq('id', note.id)
-
-    if (error) console.error('Failed to update note:', error.message)
-  }
-
   const deleteNote = async () => {
     setIsLoadingDelete(true)
 
@@ -81,13 +71,13 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
 
   return <div
     className={`group px-2 py-1 flex cursor-pointer transition-all hover:bg-accent ${isChosen && 'bg-accent'}`}
-    onClick={chooseNote}
+    onClick={() => { onClick && onClick(note.id); chooseNote(note) }}
     onDoubleClick={() => setIsEditingNow(true)}
   >
     <p className="grow truncate">{noteTitle || note?.content || 'Empty note'}</p>
     <span
       className={`hidden group-hover:flex ${isChosen && '!flex'}`}
-      onClick={e => {e.stopPropagation(); deleteNote()}}
+      onClick={e => { e.stopPropagation(); deleteNote() }}
     >
       {isLoadingDelete
         ? <Loader color="white" />

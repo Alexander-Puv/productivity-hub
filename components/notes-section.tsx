@@ -7,17 +7,26 @@ import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
 import Loader from './ui/loader'
 import { lastViewedNote } from '@/lib/utils'
+import { chooseNote } from '@/lib/actions/choose-note'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const { chosenFolderID } = useFolderStore()
   const [chosenNotes, setChosenNotes] = useState<INotes[] | null>(null)
-  const [chosenNoteID, setChosenNoteID] = useState(lastViewedNote(notes)?.id || '')
+  const [chosenNoteID, setChosenNoteID] = useState(lastViewedNote(chosenNotes)?.id || '')
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setChosenNotes(notes?.filter(note => note.folder_id == chosenFolderID) ?? null)
+    const filtered = notes?.filter(note => note.folder_id == chosenFolderID) ?? null
+    setChosenNotes(filtered)
+    if (filtered && filtered.length > 0) {
+      const lastViewed = lastViewedNote(filtered)
+      if (lastViewed) {
+        setChosenNoteID(lastViewed.id)
+        chooseNote(lastViewed)
+      }
+    }
   }, [chosenFolderID, notes])
 
   const handleNewNote = async () => {
@@ -56,7 +65,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
               .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
               .map(note => <NavbarNote
                 note={note}
-                isChosen={chosenNoteID === note.id || chosenNotes.length === 1}
+                isChosen={chosenNoteID === note.id}
                 onClick={setChosenNoteID}
                 setChosenNotes={setChosenNotes}
                 key={note.id}
