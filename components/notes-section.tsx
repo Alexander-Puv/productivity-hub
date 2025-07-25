@@ -8,6 +8,8 @@ import NewButton from './ui/new-button'
 import Loader from './ui/loader'
 import { lastViewedNote } from '@/lib/utils'
 import { chooseNote } from '@/lib/actions/choose-note'
+import NoteEditor from './note-editor'
+import { createClient } from '@/lib/supabase/client'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const { chosenFolderID } = useFolderStore()
@@ -16,6 +18,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const supabase = createClient()
 
   useEffect(() => {
     const filtered = notes?.filter(note => note.folder_id == chosenFolderID) ?? null
@@ -48,14 +51,21 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
 
   return (!chosenFolderID ? null :
     <section className='grow flex'>
-      <div className='grow'>
-        {chosenNotes && chosenNotes.length !== 0
-          // ?
-          // :
-        }
+      <div className='grow overflow-x-hidden'>
+        {chosenNoteID && <NoteEditor
+        content={chosenNotes?.find(note => note.id === chosenNoteID)?.content || ''}
+        onUpdate={async (html) => {
+          console.log(html);
+          
+          await supabase
+            .from('notes')
+            .update({ content: html })
+            .eq('id', chosenNoteID)
+        }}
+      />}
       </div>
       <div className='max-w-72 w-full flex'>
-        <nav className='fixed right-0 max-w-[inherit] w-full max-h-[inherit] h-full flex flex-col border-l'>
+        <nav className='fixed right-0 max-w-[inherit] w-full max-h-[inherit] h-full flex flex-col bg-background border-l'>
           <div className="group mb-2 p-1 flex items-center cursor-pointer transition hover:bg-accent" onClick={() => setNewNote(true)}>
             <NewButton width={12} height={12} />
             <p>New page</p>
