@@ -1,4 +1,4 @@
-import { FontSize } from '@/lib/extentions/font-size'
+// import { FontSize } from '@/lib/extentions/font-size'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import BulletList from '@tiptap/extension-bullet-list'
@@ -8,7 +8,7 @@ import Highlight from '@tiptap/extension-highlight'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import TextAlign from '@tiptap/extension-text-align'
-import { TextStyle } from '@tiptap/extension-text-style'
+import { FontSize, TextStyle } from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -169,9 +169,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
       <EditorContent
         editor={editor}
         className="
-          grow p-3 overflow-y-auto
-          *:outline-none [&_span]:flex [&_mark]:flex
-          [&_p]:flex [&_mark]:h-[calc(100%-0.25rem)] [&_mark]:translate-y-0.5
+          grow p-3 overflow-y-auto *:outline-none
           [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5
         "
         onClick={handleEditorClick}
