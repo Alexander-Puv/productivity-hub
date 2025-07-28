@@ -1,4 +1,4 @@
-// import { FontSize } from '@/lib/extentions/font-size'
+import { createClient } from '@/lib/supabase/client'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import BulletList from '@tiptap/extension-bullet-list'
@@ -13,16 +13,38 @@ import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, Highlighter, Italic, ListIcon, ListOrderedIcon, Type, UnderlineIcon } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
+import Loader from './ui/loader'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
 const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
 const textColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15']
 
-const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html: string) => void }) => {
+const NoteEditor = ({ noteID }: { noteID: string }) => {
+  const [content, setContent] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [chosenFontSize, setChosenFontSize] = useState(fontSizes[2])
   const [chosenHighlighterColor, setChosenHighlighterColor] = useState(highlighterColors[4])
   const [chosenTextColor, setChosenTextColor] = useState(textColors[0])
+  const supabase = createClient()
+
+  useEffect(() => {
+    const changeContent = async () => {
+      const { data, error } = await supabase.from('notes').select().filter('id', 'in', `("${noteID}")`)
+      if (error) setError('Failed to get note: ' + error.message)
+      setContent((data as INotes[])[0].content)
+    }
+    changeContent()
+  }, [noteID])
+
+  const onUpdate = async (html: string) => {
+    const { error } = await supabase
+      .from('notes')
+      .update({ content: html })
+      .eq('id', noteID)
+
+    if (error) console.error(error)
+  }
 
   const editor = useEditor({
     extensions: [
@@ -42,6 +64,16 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
     onUpdate: ({ editor }) => onUpdate?.(editor.getHTML()),
     immediatelyRender: false
   })
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || '')
+    }
+  }, [content, editor])
+
+  if (error) return error
+
+  if (!content) return <Loader />
 
   const handleEditorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const firstChild = e.currentTarget.querySelector(':scope > *') as HTMLElement
@@ -66,7 +98,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
         </Toolbar.ToggleGroup>
 
         <Toolbar.Separator className='border-r' />
-        
+
         <Toolbar.ToggleGroup type="multiple" className='flex items-center gap-2'>
           <div className="flex">
             <ToolbarToggleItem value='fontSize'>
@@ -88,7 +120,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {fontSizes.map(size => (
                   <DropdownMenu.Item
-                    onSelect={() => {editor.chain().focus().setFontSize(size + 'px').run(); setChosenFontSize(size)}}
+                    onSelect={() => { editor.chain().focus().setFontSize(size + 'px').run(); setChosenFontSize(size) }}
                     className="px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
                     key={size}
                   >
@@ -98,7 +130,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </div>
-          
+
           <div className="flex">
             <ToolbarToggleItem
               value='highlighterColor'
@@ -113,7 +145,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {highlighterColors.map(color => (
                   <DropdownMenu.Item
-                    onSelect={() => {editor.chain().focus().setHighlight({ color }).run(); setChosenHighlighterColor(color)}}
+                    onSelect={() => { editor.chain().focus().setHighlight({ color }).run(); setChosenHighlighterColor(color) }}
                     className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
                     key={color}
                   >
@@ -136,7 +168,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {textColors.map(color => (
                   <DropdownMenu.Item
-                    onSelect={() => {editor.chain().focus().setColor(color).run(); setChosenTextColor(color)}}
+                    onSelect={() => { editor.chain().focus().setColor(color).run(); setChosenTextColor(color) }}
                     className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
                     key={color}
                   >
@@ -157,7 +189,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
           <ToolbarToggleItem value='right' onClick={() => editor.chain().focus().setTextAlign('right').run()}><AlignRight /></ToolbarToggleItem>
           <ToolbarToggleItem value='justify' onClick={() => editor.chain().focus().setTextAlign('justify').run()}><AlignJustify /></ToolbarToggleItem>
         </Toolbar.ToggleGroup>
-        
+
         <Toolbar.Separator className='border-r' />
 
         <Toolbar.ToggleGroup type='single' className='flex items-center gap-2'>
@@ -178,7 +210,7 @@ const NoteEditor = ({ content, onUpdate }: { content?: string, onUpdate?: (html:
   )
 }
 
-const ToolbarToggleItem = ({onClick, value, children}: {onClick?: () => void, value: string, children: ReactNode}) => {
+const ToolbarToggleItem = ({ onClick, value, children }: { onClick?: () => void, value: string, children: ReactNode }) => {
   return (
     <Toolbar.ToggleItem
       className='p-1 rounded-md hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'

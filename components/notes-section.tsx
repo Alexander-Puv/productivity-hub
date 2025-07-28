@@ -1,15 +1,16 @@
 'use client'
 
 import { addRecord } from '@/lib/actions/add-record'
+import { chooseNote } from '@/lib/actions/choose-note'
 import { useFolderStore } from '@/lib/hooks/use-folder-store'
+import { createClient } from '@/lib/supabase/client'
+import { lastViewedNote } from '@/lib/utils'
 import { useEffect, useState } from 'react'
+import NoteEditor from './note-editor'
+import Loader from './ui/loader'
 import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
-import Loader from './ui/loader'
-import { lastViewedNote } from '@/lib/utils'
-import { chooseNote } from '@/lib/actions/choose-note'
-import NoteEditor from './note-editor'
-import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const { chosenFolderID } = useFolderStore()
@@ -18,7 +19,6 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
 
   useEffect(() => {
     const filtered = notes?.filter(note => note.folder_id == chosenFolderID) ?? null
@@ -53,16 +53,8 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
     <section className='grow flex'>
       <div className='grow overflow-x-hidden'>
         {chosenNoteID && <NoteEditor
-        content={chosenNotes?.find(note => note.id === chosenNoteID)?.content || ''}
-        onUpdate={async (html) => {
-          console.log(html);
-          
-          await supabase
-            .from('notes')
-            .update({ content: html })
-            .eq('id', chosenNoteID)
-        }}
-      />}
+          noteID={chosenNoteID}
+        />}
       </div>
       <div className='max-w-72 w-full flex'>
         <nav className='fixed right-0 max-w-[inherit] w-full max-h-[inherit] h-full flex flex-col bg-background border-l'>
