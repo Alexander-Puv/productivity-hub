@@ -3,14 +3,13 @@
 import { addRecord } from '@/lib/actions/add-record'
 import { chooseNote } from '@/lib/actions/choose-note'
 import { useFolderStore } from '@/lib/hooks/use-folder-store'
-import { createClient } from '@/lib/supabase/client'
 import { lastViewedNote } from '@/lib/utils'
+import * as HoverCard from '@radix-ui/react-hover-card'
 import { useEffect, useState } from 'react'
 import NoteEditor from './note-editor'
 import Loader from './ui/loader'
 import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
-import { useRouter } from 'next/navigation'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const { chosenFolderID } = useFolderStore()
@@ -58,9 +57,12 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
       </div>
       <div className='max-w-72 w-full flex'>
         <nav className='fixed right-0 max-w-[inherit] w-full max-h-[inherit] h-full flex flex-col bg-background border-l'>
-          <div className="group mb-2 p-1 flex items-center cursor-pointer transition hover:bg-accent" onClick={() => setNewNote(true)}>
+          <div
+            className="group mb-2 p-1 flex items-center cursor-pointer transition hover:bg-accent"
+            onClick={() => setNewNote(true)}
+          >
             <NewButton width={12} height={12} />
-            <p>New page</p>
+            <p>New note</p>
           </div>
           {chosenNotes && chosenNotes.length !== 0
             && chosenNotes

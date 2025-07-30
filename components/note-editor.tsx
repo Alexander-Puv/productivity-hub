@@ -13,8 +13,9 @@ import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, Highlighter, Italic, ListIcon, ListOrderedIcon, Type, UnderlineIcon } from 'lucide-react'
-import { ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Loader from './ui/loader'
+import ToolbarToggleItem from './ui/toolbar-toggle-item'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
 const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
@@ -101,7 +102,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
         <Toolbar.ToggleGroup type="multiple" className='flex items-center gap-2'>
           <div className="flex">
-            <ToolbarToggleItem value='fontSize'>
+            <ToolbarToggleItem value='Font Size'>
               {chosenFontSize}px
               {/* <input
                 type='number'
@@ -124,7 +125,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
                     className="px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
                     key={size}
                   >
-                    {size}
+                    {size}px
                   </DropdownMenu.Item>
                 ))}
               </DropdownMenu.Content>
@@ -133,7 +134,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
           <div className="flex">
             <ToolbarToggleItem
-              value='highlighterColor'
+              value='Highlighter Color'
               onClick={() => editor.chain().focus().setHighlight({ color: chosenHighlighterColor }).run()}
             >
               <Highlighter color={chosenHighlighterColor !== '#00000000' ? chosenHighlighterColor : undefined} />
@@ -184,17 +185,17 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
         <Toolbar.Separator className='border-r' />
 
         <Toolbar.ToggleGroup type='single' className='flex items-center gap-2'>
-          <ToolbarToggleItem value='left' onClick={() => editor.chain().focus().setTextAlign('left').run()}><AlignLeft /></ToolbarToggleItem>
-          <ToolbarToggleItem value='center' onClick={() => editor.chain().focus().setTextAlign('center').run()}><AlignCenter /></ToolbarToggleItem>
-          <ToolbarToggleItem value='right' onClick={() => editor.chain().focus().setTextAlign('right').run()}><AlignRight /></ToolbarToggleItem>
-          <ToolbarToggleItem value='justify' onClick={() => editor.chain().focus().setTextAlign('justify').run()}><AlignJustify /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Left' onClick={() => editor.chain().focus().setTextAlign('left').run()}><AlignLeft /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Center' onClick={() => editor.chain().focus().setTextAlign('center').run()}><AlignCenter /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Right' onClick={() => editor.chain().focus().setTextAlign('right').run()}><AlignRight /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Justify' onClick={() => editor.chain().focus().setTextAlign('justify').run()}><AlignJustify /></ToolbarToggleItem>
         </Toolbar.ToggleGroup>
 
         <Toolbar.Separator className='border-r' />
 
         <Toolbar.ToggleGroup type='single' className='flex items-center gap-2'>
-          <ToolbarToggleItem value='bulletList' onClick={() => editor.chain().focus().toggleBulletList().run()}><ListIcon /></ToolbarToggleItem>
-          <ToolbarToggleItem value='orderedList' onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrderedIcon /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Bullet List' onClick={() => editor.chain().focus().toggleBulletList().run()}><ListIcon /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Ordered List' onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrderedIcon /></ToolbarToggleItem>
         </Toolbar.ToggleGroup>
       </Toolbar.Root>
 
@@ -207,18 +208,6 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
         onClick={handleEditorClick}
       />
     </div>
-  )
-}
-
-const ToolbarToggleItem = ({ onClick, value, children }: { onClick?: () => void, value: string, children: ReactNode }) => {
-  return (
-    <Toolbar.ToggleItem
-      className='p-1 rounded-md hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'
-      onClick={onClick}
-      value={value}
-    >
-      {children}
-    </Toolbar.ToggleItem>
   )
 }
 
