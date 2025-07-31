@@ -16,6 +16,7 @@ import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, Hi
 import { useEffect, useState } from 'react'
 import Loader from './ui/loader'
 import ToolbarToggleItem from './ui/toolbar-toggle-item'
+import { EditorState } from 'prosemirror-state'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
 const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
@@ -27,6 +28,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
   const [chosenFontSize, setChosenFontSize] = useState(fontSizes[2])
   const [chosenHighlighterColor, setChosenHighlighterColor] = useState(highlighterColors[4])
   const [chosenTextColor, setChosenTextColor] = useState(textColors[0])
+  const [savedSelection, setSavedSelection] = useState<EditorState['selection'] | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -76,12 +78,16 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
   if (!content) return <Loader />
 
+  if (!editor) return null
+
   const handleEditorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const firstChild = e.currentTarget.querySelector(':scope > *') as HTMLElement
     if (firstChild) firstChild.focus()
   }
 
-  if (!editor) return null
+  const restoreSelection = () => {
+    savedSelection && editor.view.dispatch(editor.state.tr.setSelection(savedSelection))
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -103,16 +109,15 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
         <Toolbar.ToggleGroup type="multiple" className='flex items-center gap-2'>
           <div className="flex">
             <ToolbarToggleItem value='Font Size'>
-              {chosenFontSize}px
-              {/* <input
+              <input
                 type='number'
                 value={chosenFontSize}
                 onChange={e => setChosenFontSize(Number(e.target.value))}
                 className='w-10 text-primary outline-none border-none appearance-none'
-                onBlur={e => editor.chain().focus().setFontSize(e.target.value).run()}
+                onFocus={restoreSelection}
+                onBlur={e => editor.chain().focus().setFontSize(e.target.value + 'px').run()}
                 onKeyDown={e => e.key === 'Enter' && editor.chain().focus().setFontSize(e.currentTarget.value).run()}
-              /> */}
-              {/* Сделать сохранение выбраного текста и его выделение bg-accent */}
+              />
             </ToolbarToggleItem>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -202,7 +207,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
       <EditorContent
         editor={editor}
         className="
-          grow p-3 overflow-y-auto *:outline-none
+          grow p-3 overflow-y-auto whitespace-pre-wrap *:outline-none
           [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5
         "
         onClick={handleEditorClick}
