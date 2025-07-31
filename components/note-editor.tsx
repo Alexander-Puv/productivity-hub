@@ -209,6 +209,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
         className="
           grow p-3 overflow-y-auto whitespace-pre-wrap *:outline-none
           [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5
+          selection:bg-blue-700 selection:bg-opacity-50
         "
         onClick={handleEditorClick}
       />
