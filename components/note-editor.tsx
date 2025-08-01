@@ -80,11 +80,6 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
   if (!editor) return null
 
-  const handleEditorClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const firstChild = e.currentTarget.querySelector(':scope > *') as HTMLElement
-    if (firstChild) firstChild.focus()
-  }
-
   const restoreSelection = () => {
     savedSelection && editor.view.dispatch(editor.state.tr.setSelection(savedSelection))
   }
@@ -207,11 +202,11 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
       <EditorContent
         editor={editor}
         className="
-          grow p-3 overflow-y-auto whitespace-pre-wrap *:outline-none
+          grow overflow-y-auto whitespace-pre-wrap *:outline-none
           [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5
           selection:bg-blue-700 selection:bg-opacity-50
+          [&_div]:w-full [&_div]:h-full [&_div]:p-3
         "
-        onClick={handleEditorClick}
       />
     </div>
   )
