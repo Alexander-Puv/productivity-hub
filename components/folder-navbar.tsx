@@ -8,6 +8,7 @@ import Folder from './ui/folder'
 import Loader from './ui/loader'
 import NewButton from './ui/new-button'
 import * as HoverCard from '@radix-ui/react-hover-card'
+import SimpleHoverCard from './ui/simple-hover-card'
 
 const FolderNavbar = ({ folders, lastViewedFolderID }: { folders: IFolders[] | null, lastViewedFolderID: string | null }) => {
   const [newFolder, setNewFolder] = useState(false)
@@ -64,16 +65,9 @@ const FolderNavbar = ({ folders, lastViewedFolderID }: { folders: IFolders[] | n
         </Button>
       }
       {isLoading && <Loader color='white' className='mx-2 my-1' />}
-      <HoverCard.Root>
-        <HoverCard.Trigger>
-          <NewButton onClick={() => setNewFolder(true)} />
-        </HoverCard.Trigger>
-        <HoverCard.Portal>
-          <HoverCard.Content className="py-px px-1.5 bg-primary text-primary-foreground rounded">
-            New Tab
-          </HoverCard.Content>
-        </HoverCard.Portal>
-      </HoverCard.Root>
+      <SimpleHoverCard title='New Tab' triggerAsChild={false}>
+        <NewButton onClick={() => setNewFolder(true)} />
+      </SimpleHoverCard>
     </nav>
   )
 }

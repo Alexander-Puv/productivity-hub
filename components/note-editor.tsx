@@ -15,8 +15,8 @@ import StarterKit from '@tiptap/starter-kit'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, Highlighter, Italic, ListIcon, ListOrderedIcon, Type, UnderlineIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Loader from './ui/loader'
+import SimpleHoverCard from './ui/simple-hover-card'
 import ToolbarToggleItem from './ui/toolbar-toggle-item'
-import * as HoverCard from '@radix-ui/react-hover-card'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
 const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
@@ -133,25 +133,18 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             >
               <Highlighter color={chosenHighlighterColor !== '#00000000' ? chosenHighlighterColor : undefined} />
             </ToolbarToggleItem>
-            <HoverCard.Root>
-              <HoverCard.Trigger asChild>
-                <input
-                  type="color"
-                  defaultValue={chosenHighlighterColor}
-                  onBlur={(e) => {
-                    const newColor = e.target.value
-                    setChosenHighlighterColor(newColor)
-                    editor.chain().focus().setHighlight({ color: newColor }).run()
-                  }}
-                  className="w-6 h-6 cursor-pointer bg-transparent"
-                />
-              </HoverCard.Trigger>
-              <HoverCard.Portal>
-                <HoverCard.Content className="py-px px-1.5 bg-primary text-primary-foreground rounded">
-                  Color palette for highlighter
-                </HoverCard.Content>
-              </HoverCard.Portal>
-            </HoverCard.Root>
+            <SimpleHoverCard title='Color palette for highlighter'>
+              <input
+                type="color"
+                defaultValue={chosenHighlighterColor}
+                onBlur={(e) => {
+                  const newColor = e.target.value
+                  setChosenHighlighterColor(newColor)
+                  editor.chain().focus().setHighlight({ color: newColor }).run()
+                }}
+                className="w-6 h-6 cursor-pointer bg-transparent"
+              />
+            </SimpleHoverCard>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
@@ -175,25 +168,18 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             <ToolbarToggleItem value='Text color' onClick={() => editor.chain().focus().setColor(chosenTextColor).run()}>
               <Type color={chosenTextColor} />
             </ToolbarToggleItem>
-            <HoverCard.Root>
-              <HoverCard.Trigger asChild>
-                <input
-                  type="color"
-                  defaultValue={chosenTextColor}
-                  onBlur={(e) => {
-                    const newColor = e.target.value
-                    setChosenTextColor(newColor)
-                    editor.chain().focus().setColor(newColor).run()
-                  }}
-                  className="w-6 h-6 cursor-pointer bg-transparent"
-                />
-              </HoverCard.Trigger>
-              <HoverCard.Portal>
-                <HoverCard.Content className="py-px px-1.5 bg-primary text-primary-foreground rounded">
-                  Color palette for text
-                </HoverCard.Content>
-              </HoverCard.Portal>
-            </HoverCard.Root>
+            <SimpleHoverCard title='Color palette for text'>
+              <input
+                type="color"
+                defaultValue={chosenTextColor}
+                onBlur={(e) => {
+                  const newColor = e.target.value
+                  setChosenTextColor(newColor)
+                  editor.chain().focus().setColor(newColor).run()
+                }}
+                className="w-6 h-6 cursor-pointer bg-transparent"
+              />
+            </SimpleHoverCard>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
