@@ -16,7 +16,7 @@ import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, Hi
 import { useEffect, useState } from 'react'
 import Loader from './ui/loader'
 import ToolbarToggleItem from './ui/toolbar-toggle-item'
-import { EditorState } from 'prosemirror-state'
+import * as HoverCard from '@radix-ui/react-hover-card'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
 const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
@@ -28,7 +28,6 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
   const [chosenFontSize, setChosenFontSize] = useState(fontSizes[2])
   const [chosenHighlighterColor, setChosenHighlighterColor] = useState(highlighterColors[4])
   const [chosenTextColor, setChosenTextColor] = useState(textColors[0])
-  const [savedSelection, setSavedSelection] = useState<EditorState['selection'] | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -80,13 +79,9 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
   if (!editor) return null
 
-  const restoreSelection = () => {
-    savedSelection && editor.view.dispatch(editor.state.tr.setSelection(savedSelection))
-  }
-
   return (
     <div className="w-full h-full flex flex-col">
-      <Toolbar.Root className="px-4 py-1 flex gap-2 bg-background border-b">
+      <Toolbar.Root className="px-4 py-1 flex gap-2 bg-background border-b" suppressHydrationWarning>
         <Toolbar.ToggleGroup type="multiple" className='flex items-center gap-2'>
           <ToolbarToggleItem value='Bold' onClick={() => editor.chain().focus().toggleBold().run()}>
             <Bold />
@@ -103,13 +98,12 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
 
         <Toolbar.ToggleGroup type="multiple" className='flex items-center gap-2'>
           <div className="flex">
-            <ToolbarToggleItem value='Font Size'>
+            <ToolbarToggleItem value='Font size'>
               <input
                 type='number'
                 value={chosenFontSize}
                 onChange={e => setChosenFontSize(Number(e.target.value))}
                 className='w-10 text-primary outline-none border-none appearance-none'
-                onFocus={restoreSelection}
                 onBlur={e => editor.chain().focus().setFontSize(e.target.value + 'px').run()}
                 onKeyDown={e => e.key === 'Enter' && editor.chain().focus().setFontSize(e.currentTarget.value).run()}
               />
@@ -132,13 +126,32 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             </DropdownMenu.Root>
           </div>
 
-          <div className="flex">
+          <div className="flex items-center">
             <ToolbarToggleItem
-              value='Highlighter Color'
+              value='Highlighter color'
               onClick={() => editor.chain().focus().setHighlight({ color: chosenHighlighterColor }).run()}
             >
               <Highlighter color={chosenHighlighterColor !== '#00000000' ? chosenHighlighterColor : undefined} />
             </ToolbarToggleItem>
+            <HoverCard.Root>
+              <HoverCard.Trigger asChild>
+                <input
+                  type="color"
+                  defaultValue={chosenHighlighterColor}
+                  onBlur={(e) => {
+                    const newColor = e.target.value
+                    setChosenHighlighterColor(newColor)
+                    editor.chain().focus().setHighlight({ color: newColor }).run()
+                  }}
+                  className="w-6 h-6 cursor-pointer bg-transparent"
+                />
+              </HoverCard.Trigger>
+              <HoverCard.Portal>
+                <HoverCard.Content className="py-px px-1.5 bg-primary text-primary-foreground rounded">
+                  Color palette for highlighter
+                </HoverCard.Content>
+              </HoverCard.Portal>
+            </HoverCard.Root>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
@@ -158,10 +171,29 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             </DropdownMenu.Root>
           </div>
 
-          <div className="flex">
-            <ToolbarToggleItem value='textColor' onClick={() => editor.chain().focus().setColor(chosenTextColor).run()}>
+          <div className="flex items-center">
+            <ToolbarToggleItem value='Text color' onClick={() => editor.chain().focus().setColor(chosenTextColor).run()}>
               <Type color={chosenTextColor} />
             </ToolbarToggleItem>
+            <HoverCard.Root>
+              <HoverCard.Trigger asChild>
+                <input
+                  type="color"
+                  defaultValue={chosenTextColor}
+                  onBlur={(e) => {
+                    const newColor = e.target.value
+                    setChosenTextColor(newColor)
+                    editor.chain().focus().setColor(newColor).run()
+                  }}
+                  className="w-6 h-6 cursor-pointer bg-transparent"
+                />
+              </HoverCard.Trigger>
+              <HoverCard.Portal>
+                <HoverCard.Content className="py-px px-1.5 bg-primary text-primary-foreground rounded">
+                  Color palette for text
+                </HoverCard.Content>
+              </HoverCard.Portal>
+            </HoverCard.Root>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
@@ -194,8 +226,8 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
         <Toolbar.Separator className='border-r' />
 
         <Toolbar.ToggleGroup type='single' className='flex items-center gap-2'>
-          <ToolbarToggleItem value='Bullet List' onClick={() => editor.chain().focus().toggleBulletList().run()}><ListIcon /></ToolbarToggleItem>
-          <ToolbarToggleItem value='Ordered List' onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrderedIcon /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Bullet list' onClick={() => editor.chain().focus().toggleBulletList().run()}><ListIcon /></ToolbarToggleItem>
+          <ToolbarToggleItem value='Ordered list' onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrderedIcon /></ToolbarToggleItem>
         </Toolbar.ToggleGroup>
       </Toolbar.Root>
 
