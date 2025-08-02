@@ -34,7 +34,7 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
     const changeContent = async () => {
       const { data, error } = await supabase.from('notes').select().filter('id', 'in', `("${noteID}")`)
       if (error) setError('Failed to get note: ' + error.message)
-      setContent((data as INotes[])[0].content)
+      setContent(data && (data as INotes[])[0].content || null)
     }
     changeContent()
   }, [noteID])
@@ -63,21 +63,19 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
       ListItem,
     ],
     content: content || '',
-    onUpdate: ({ editor }) => onUpdate?.(editor.getHTML()),
+    onUpdate: ({ editor }) => onUpdate(editor.getHTML()),
     immediatelyRender: false
-  })
+  }, [noteID])
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content || '')
     }
   }, [content, editor])
-
+  
   if (error) return error
 
-  if (!content) return <Loader />
-
-  if (!editor) return null
+  if (!editor) return <div className='flex p-2'><Loader color='white' /></div>
 
   return (
     <div className="w-full h-full flex flex-col">
