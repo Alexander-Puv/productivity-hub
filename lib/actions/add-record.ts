@@ -20,7 +20,7 @@ type AddRecordProps =
       revalidate?: string
     }
 
-export async function addRecord({tableName, values, revalidate = '/dashboard'}: AddRecordProps) {
+export async function addRecord({tableName, values, revalidate = '/dashboard/todos'}: AddRecordProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   

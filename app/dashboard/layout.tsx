@@ -33,10 +33,10 @@ export default function Layout({
           <Link href={"/"}><i className="font-semibold">LOGO</i></Link>
         </div>
         <div className="flex items-center text-sm">
-          {pathname == '/dashboard' ?
-            <span>Dashboard / <Link href='/dashboard/notes'><Button>Notes</Button></Link></span>
+          {pathname == '/dashboard/todos' ?
+            <span>Todos / <Link href='/dashboard/notes'><Button>Notes</Button></Link></span>
           :
-            <span><Link href='/dashboard'><Button>Dashboard</Button></Link> / Notes</span>
+            <span><Link href='/dashboard/todos'><Button>Todos</Button></Link> / Notes</span>
           }
         </div>
         <div className="px-2 flex items-center gap-2">
