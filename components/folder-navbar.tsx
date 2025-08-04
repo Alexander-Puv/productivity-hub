@@ -7,7 +7,6 @@ import { Button } from './ui/button'
 import Folder from './ui/folder'
 import Loader from './ui/loader'
 import NewButton from './ui/new-button'
-import * as HoverCard from '@radix-ui/react-hover-card'
 import SimpleHoverCard from './ui/simple-hover-card'
 
 const FolderNavbar = ({ folders, lastViewedFolderID }: { folders: IFolders[] | null, lastViewedFolderID: string | null }) => {

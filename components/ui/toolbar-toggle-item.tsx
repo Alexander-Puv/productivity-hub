@@ -12,7 +12,7 @@ const ToolbarToggleItem = ({ children, value, onClick }: ToolbarToggleItemProps)
   return (
     <SimpleHoverCard title={value}>
       <ToggleItem
-        className='p-1 rounded-md hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'
+        className='p-1 rounded-md hover:bg-border data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'
         onClick={onClick}
         value={value}
       >

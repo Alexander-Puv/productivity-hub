@@ -19,15 +19,15 @@ import SimpleHoverCard from './ui/simple-hover-card'
 import ToolbarToggleItem from './ui/toolbar-toggle-item'
 
 const fontSizes = [12, 14, 16, 18, 24, 32]
-const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#00000000']
-const textColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15']
+const highlighterColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#0a0a0a', '#00000000']
+const textColors = ['#fafafa', '#e11d48', '#10b981', '#2563eb', '#facc15', '#0a0a0a']
 
 const NoteEditor = ({ noteID }: { noteID: string }) => {
   const [content, setContent] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [chosenFontSize, setChosenFontSize] = useState(fontSizes[2])
   const [chosenHighlighterColor, setChosenHighlighterColor] = useState(highlighterColors[4])
-  const [chosenTextColor, setChosenTextColor] = useState(textColors[0])
+  const [chosenTextColor, setChosenTextColor] = useState(textColors[2])
   const supabase = createClient()
 
   useEffect(() => {
@@ -108,13 +108,13 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             </ToolbarToggleItem>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
+                <Toolbar.Button className='rounded-md hover:bg-border'><ChevronDown /></Toolbar.Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {fontSizes.map(size => (
                   <DropdownMenu.Item
                     onSelect={() => { editor.chain().focus().setFontSize(size + 'px').run(); setChosenFontSize(size) }}
-                    className="px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
+                    className="px-2 py-1 rounded-md hover:bg-border cursor-pointer"
                     key={size}
                   >
                     {size}px
@@ -145,13 +145,13 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             </SimpleHoverCard>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
+                <Toolbar.Button className='rounded-md hover:bg-border'><ChevronDown /></Toolbar.Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {highlighterColors.map(color => (
                   <DropdownMenu.Item
                     onSelect={() => { editor.chain().focus().setHighlight({ color }).run(); setChosenHighlighterColor(color) }}
-                    className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
+                    className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-border cursor-pointer"
                     key={color}
                   >
                     <span className="w-4 h-4 rounded" style={{ backgroundColor: color }} />
@@ -180,13 +180,13 @@ const NoteEditor = ({ noteID }: { noteID: string }) => {
             </SimpleHoverCard>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Toolbar.Button className='rounded-md hover:bg-accent'><ChevronDown /></Toolbar.Button>
+                <Toolbar.Button className='rounded-md hover:bg-border'><ChevronDown /></Toolbar.Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="relative z-10 bg-background border rounded p-1">
                 {textColors.map(color => (
                   <DropdownMenu.Item
                     onSelect={() => { editor.chain().focus().setColor(color).run(); setChosenTextColor(color) }}
-                    className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent cursor-pointer"
+                    className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-border cursor-pointer"
                     key={color}
                   >
                     <span className="w-4 h-4 rounded" style={{ backgroundColor: color }} />

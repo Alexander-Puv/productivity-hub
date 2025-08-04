@@ -57,7 +57,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
       <div className='max-w-72 w-full flex'>
         <nav className='fixed right-0 max-w-[inherit] w-full max-h-[inherit] h-full flex flex-col bg-background border-l'>
           <div
-            className="group mb-2 p-1 flex items-center cursor-pointer transition hover:bg-accent"
+            className="group mb-2 p-1 flex items-center cursor-pointer transition hover:bg-border"
             onClick={() => setNewNote(true)}
           >
             <NewButton width={12} height={12} />

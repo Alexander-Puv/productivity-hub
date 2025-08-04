@@ -78,7 +78,7 @@ const Todo = (
         <Separator className="m-1 w-px bg-border" />
         <div className="flex flex-col">
           <Toggle
-            className={`flex-grow my-1 mx-1 px-1 rounded transition ${isDone ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}`}
+            className={`flex-grow my-1 mx-1 px-1 rounded transition ${isDone ? 'bg-primary text-primary-foreground' : 'hover:bg-border'}`}
             onClick={toggleDone}
           >
             <Check />
@@ -90,7 +90,7 @@ const Todo = (
         {!isDone || !autoHide
           ? `${formatDate(created_at)} ${formatTime(created_at)}`
           : <Progress.Root
-            className="relative h-3 w-8 my-0.5 overflow-hidden rounded-full bg-accent"
+            className="relative h-3 w-8 my-0.5 overflow-hidden rounded-full bg-border"
             style={{transform: "translateZ(0)"}}
             value={value}
           >

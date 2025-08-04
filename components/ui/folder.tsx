@@ -1,12 +1,12 @@
 'use client'
 
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "./button"
-import Loader from "./loader"
-import { Dispatch, FocusEvent, SetStateAction, useRef, useState } from "react"
 import { useFolderStore } from "@/lib/hooks/use-folder-store"
+import { createClient } from "@/lib/supabase/client"
 import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { Dispatch, FocusEvent, SetStateAction, useRef, useState } from "react"
+import { Button } from "./button"
+import Loader from "./loader"
 
 const Folder = ({ folder, setFilteredFolders }:
   { folder: IFolders, setFilteredFolders: Dispatch<SetStateAction<IFolders[] | null>> }) => {
@@ -60,7 +60,7 @@ const Folder = ({ folder, setFilteredFolders }:
 
   return (
     <Button
-      className={`group max-w-[14.5rem] ${chosenFolderID === folder.id ? "rounded-b-none" : 'rounded-none'}`}
+      className={`group max-w-[14.5rem] ${chosenFolderID === folder.id ? "rounded-b-none cursor-default hover:bg-primary" : 'rounded-none'}`}
       variant={chosenFolderID === folder.id ? 'default' : 'ghost'}
       onClick={() => setChosenFolderID(folder.id)}
       onDoubleClick={() => setIsEditing(true)}
@@ -80,7 +80,7 @@ const Folder = ({ folder, setFilteredFolders }:
           : <div className="flex items-center gap-1">
             <p className="truncate">{inputValue || 'No title'}</p>
             <span
-              className={`hidden group-hover:flex transition-colors hover:text-destructive ${chosenFolderID === folder.id && '!flex'}`}
+              className={`hidden group-hover:flex cursor-pointer transition-colors hover:text-destructive ${chosenFolderID === folder.id && '!flex'}`}
               onClick={e => { e.stopPropagation(); deleteFolder() }}
             >
               {isLoadingDelete
