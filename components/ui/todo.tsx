@@ -95,7 +95,7 @@ const Todo = (
             value={value}
           >
             <Progress.Indicator 
-              className="bg-primary transition-transform duration-200 ease-in-out"
+              className="size-full bg-primary transition-transform duration-200 ease-in-out"
               style={{ transform: `translateX(-${100 - value}%)` }}
             />
           </Progress.Root>
