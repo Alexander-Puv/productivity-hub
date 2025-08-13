@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client"
 import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import Loader from "./loader"
 import { chooseNote } from "@/lib/actions/choose-note"
 
@@ -69,6 +69,12 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
     setIsLoadingDelete(false)
   }
 
+  const stipeContent = () => {
+    const temp = document.createElement("div")
+    temp.innerHTML = note.content
+    return temp.textContent || temp.innerText || ''
+  }
+
   return <div
     className={`group px-2 py-1 flex cursor-pointer transition-all hover:bg-border ${isChosen && 'bg-border'}`}
     onClick={() => {
@@ -77,7 +83,7 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
     }}
     onDoubleClick={() => setIsEditingNow(true)}
   >
-    <p className="grow truncate">{noteTitle || note?.content || 'Empty note'}</p>
+    <p className="grow truncate">{noteTitle || stipeContent() || 'Empty note'}</p>
     <span
       className={`hidden group-hover:flex ${isChosen && '!flex'}`}
       onClick={e => { e.stopPropagation(); deleteNote() }}

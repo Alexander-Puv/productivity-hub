@@ -9,6 +9,7 @@ import NoteEditor from './note-editor'
 import Loader from './ui/loader'
 import NavbarNote from './ui/navbar-note'
 import NewButton from './ui/new-button'
+import { useRouter } from 'next/navigation'
 
 const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const { chosenFolderID } = useFolderStore()
@@ -17,6 +18,7 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
   const [newNote, setNewNote] = useState(false)
   const [noteTitle, setNoteTitle] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const filtered = notes?.filter(note => note.folder_id == chosenFolderID) ?? null
@@ -29,6 +31,10 @@ const NotesSection = ({ notes }: { notes: INotes[] | null }) => {
       }
     }
   }, [chosenFolderID, notes])
+
+  useEffect(() => {
+    router.refresh()
+  }, [chosenNoteID])
 
   const handleNewNote = async () => {
     setNoteTitle('')
