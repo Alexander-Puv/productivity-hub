@@ -1,11 +1,11 @@
 'use client'
 
+import { chooseNote } from "@/lib/actions/choose-note"
 import { createClient } from "@/lib/supabase/client"
 import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import Loader from "./loader"
-import { chooseNote } from "@/lib/actions/choose-note"
 
 interface NavbarNoteProps {
   note: INotes | null
