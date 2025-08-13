@@ -18,7 +18,7 @@ const FolderNavbar = ({ folders, lastViewedFolderID }: { folders: IFolders[] | n
   const wrapperRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    lastViewedFolderID && setChosenFolderID(lastViewedFolderID)
+    if (lastViewedFolderID) setChosenFolderID(lastViewedFolderID)
   }, [])
 
   useEffect(() => {

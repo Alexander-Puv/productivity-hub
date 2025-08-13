@@ -51,7 +51,7 @@ const Folder = ({ folder, setFilteredFolders }:
 
     if (error) console.error('Failed to delete folder:', error.message)
     else {
-      setFilteredFolders && setFilteredFolders(folders => folders?.filter(thisFolder => thisFolder.id !== folder.id) ?? null)
+      setFilteredFolders(folders => folders?.filter(thisFolder => thisFolder.id !== folder.id) ?? null)
       router.refresh()
     }
 

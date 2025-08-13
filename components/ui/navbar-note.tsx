@@ -62,7 +62,7 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
 
     if (error) console.error('Failed to delete note:', error.message)
     else {
-      setChosenNotes && setChosenNotes(notes => notes?.filter(thisNote => thisNote.id !== note.id) ?? null)
+      if (setChosenNotes) setChosenNotes(notes => notes?.filter(thisNote => thisNote.id !== note.id) ?? null)
       router.refresh()
     }
 
@@ -71,7 +71,10 @@ const NavbarNote = ({ note, isChosen, onClick, setChosenNotes, isEditing, inputV
 
   return <div
     className={`group px-2 py-1 flex cursor-pointer transition-all hover:bg-border ${isChosen && 'bg-border'}`}
-    onClick={() => { onClick && onClick(note.id); chooseNote(note) }}
+    onClick={() => {
+      if (onClick) onClick(note.id)
+      chooseNote(note)
+    }}
     onDoubleClick={() => setIsEditingNow(true)}
   >
     <p className="grow truncate">{noteTitle || note?.content || 'Empty note'}</p>

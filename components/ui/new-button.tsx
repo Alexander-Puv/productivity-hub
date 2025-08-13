@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react'
 import React from 'react'
 
 interface NewButtonProps {
-  onClick?: Function
+  onClick?: () => void
   width?: number
   height?: number
 }
